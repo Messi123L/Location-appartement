@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Historique des Réservations{% endblock %}
+
+{% block content %}
+<h1>Mes Réservations</h1>
+<table style="width: 100%; border-collapse: collapse; margin-top: 2rem;">
+    <thead>
+        <tr style="background-color: #2c3e50; color: white;">
+            <th style="padding: 1rem;">Appartement</th>
+            <th style="padding: 1rem;">Dates</th>
+            <th style="padding: 1rem;">Voyageurs</th>
+            <th style="padding: 1rem;">Montant</th>
+            <th style="padding: 1rem;">Statut</th>
+            <th style="padding: 1rem;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for reservation in reservations %}
+            <tr style="border-bottom: 1px solid #ddd;">
+                <td style="padding: 1rem;">{{ reservation.apartment.title }}</td>
+                <td style="padding: 1rem;">{{ reservation.check_in_date }} au {{ reservation.check_out_date }}</td>
+                <td style="padding: 1rem;">{{ reservation.number_of_guests }}</td>
+                <td style="padding: 1rem;">{{ reservation.total_amount }}€</td>
+                <td style="padding: 1rem;">
+                    {% if reservation.status == 'pending' %}⏳ En attente
+                    {% elif reservation.status == 'confirmed' %}✅ Confirmée
+                    {% elif reservation.status == 'cancelled' %}❌ Annulée
+                    {% else %}✓ Terminée{% endif %}
+                </td>
+                <td style="padding: 1rem;">
+                    <a href="{% url 'reservation_detail' reservation.pk %}" class="btn btn-primary">Voir</a>
+                    {% if reservation.status == 'pending' and user == reservation.client %}
+                        <a href="{% url 'reservation_cancel' reservation.pk %}" class="btn btn-danger">Annuler</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="6" style="padding: 2rem; text-align: center;">Aucune réservation trouvée.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

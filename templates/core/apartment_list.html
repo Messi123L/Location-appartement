@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Liste des Appartements{% endblock %}
+
+{% block content %}
+<h1>Mes Appartements</h1>
+<div class="apartment-grid">
+    {% for apartment in apartments %}
+        <div class="card">
+            {% if apartment.photos %}
+                <img src="{{ apartment.photos.url }}" alt="{{ apartment.title }}">
+            {% else %}
+                <img src="https://via.placeholder.com/400x200?text=Pas+de+photo" alt="{{ apartment.title }}">
+            {% endif %}
+            <div class="card-body">
+                <h3 class="card-title">{{ apartment.title }}</h3>
+                <p>{{ apartment.city }}</p>
+                <p class="card-price">{{ apartment.price_per_night }}€ / nuit</p>
+                <p>Statut: {% if apartment.is_validated %}✅ Validé{% else %}⏳ En attente{% endif %}</p>
+                <a href="{% url 'apartment_detail' apartment.pk %}" class="btn btn-primary">Voir détails</a>
+                <a href="{% url 'apartment_update' apartment.pk %}" class="btn btn-success">Modifier</a>
+                <a href="{% url 'apartment_delete' apartment.pk %}" class="btn btn-danger">Supprimer</a>
+            </div>
+        </div>
+    {% empty %}
+        <p>Aucun appartement trouvé.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if action == 'create' %}Créer{% else %}Modifier{% endif %} un Appartement{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 2rem auto; padding: 2rem;">
+    <h2>{% if action == 'create' %}Publier{% else %}Modifier{% endif %} un appartement</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-{% if action == 'create' %}success{% else %}primary{% endif %}">
+            {% if action == 'create' %}Publier{% else %}Enregistrer{% endif %}
+        </button>
+    </form>
+</div>
+{% endblock %}

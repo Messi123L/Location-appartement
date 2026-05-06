@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ apartment.title }}{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 800px; margin: 2rem auto;">
+    {% if apartment.photos %}
+        <img src="{{ apartment.photos.url }}" alt="{{ apartment.title }}" style="height: 400px;">
+    {% else %}
+        <img src="https://via.placeholder.com/800x400?text=Pas+de+photo" alt="{{ apartment.title }}">
+    {% endif %}
+    <div class="card-body">
+        <h1>{{ apartment.title }}</h1>
+        <p><strong>Ville:</strong> {{ apartment.city }}</p>
+        <p><strong>Adresse:</strong> {{ apartment.address }}</p>
+        <p><strong>Description:</strong></p>
+        <p>{{ apartment.description }}</p>
+        <p><strong>Prix:</strong> <span class="card-price">{{ apartment.price_per_night }}€</span> / nuit</p>
+        <p><strong>Chambres:</strong> {{ apartment.bedrooms }} | <strong>Capacité:</strong> {{ apartment.max_guests }} personnes</p>
+        <p><strong>Propriétaire:</strong> {{ apartment.owner.username }}</p>
+        <p><strong>Statut:</strong> {% if apartment.is_validated %}✅ Validé{% else %}⏳ En attente de validation{% endif %}</p>
+        
+        <div style="margin-top: 2rem;">
+            {% if user.role == 'client' and apartment.is_validated %}
+                <a href="{% url 'reservation_create' apartment.pk %}" class="btn btn-success">Réserver cet appartement</a>
+            {% endif %}
+            {% if user == apartment.owner or user.role == 'admin' %}
+                <a href="{% url 'apartment_update' apartment.pk %}" class="btn btn-primary">Modifier</a>
+                <a href="{% url 'apartment_delete' apartment.pk %}" class="btn btn-danger">Supprimer</a>
+            {% endif %}
+            <a href="{% url 'message_create_to' apartment.owner.id %}" class="btn btn-primary">Contacter le propriétaire</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

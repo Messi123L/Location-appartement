@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Messages{% endblock %}
+
+{% block content %}
+<h1>Mes Messages</h1>
+<a href="{% url 'message_create' %}" class="btn btn-primary" style="margin-bottom: 2rem;">Nouveau message</a>
+
+<h2>Messages reçus</h2>
+<table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+    <thead>
+        <tr style="background-color: #2c3e50; color: white;">
+            <th style="padding: 1rem;">Expéditeur</th>
+            <th style="padding: 1rem;">Sujet</th>
+            <th style="padding: 1rem;">Date</th>
+            <th style="padding: 1rem;">Statut</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for message in received_messages %}
+            <tr style="border-bottom: 1px solid #ddd;">
+                <td style="padding: 1rem;">{{ message.sender.username }}</td>
+                <td style="padding: 1rem;">{{ message.subject|default:"(sans sujet)" }}</td>
+                <td style="padding: 1rem;">{{ message.created_at|date:"d/m/Y H:i" }}</td>
+                <td style="padding: 1rem;">{% if message.is_read %}✅ Lu{% else %}📬 Nouveau{% endif %}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="4" style="padding: 2rem; text-align: center;">Aucun message reçu.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2 style="margin-top: 2rem;">Messages envoyés</h2>
+<table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+    <thead>
+        <tr style="background-color: #27ae60; color: white;">
+            <th style="padding: 1rem;">Destinataire</th>
+            <th style="padding: 1rem;">Sujet</th>
+            <th style="padding: 1rem;">Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for message in sent_messages %}
+            <tr style="border-bottom: 1px solid #ddd;">
+                <td style="padding: 1rem;">{{ message.receiver.username }}</td>
+                <td style="padding: 1rem;">{{ message.subject|default:"(sans sujet)" }}</td>
+                <td style="padding: 1rem;">{{ message.created_at|date:"d/m/Y H:i" }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="3" style="padding: 2rem; text-align: center;">Aucun message envoyé.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
