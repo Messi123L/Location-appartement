@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Détails de la Réservation{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 2rem auto; padding: 2rem;">
+    <h2>Détails de la Réservation</h2>
+    <p><strong>Appartement:</strong> {{ reservation.apartment.title }}</p>
+    <p><strong>Client:</strong> {{ reservation.client.username }}</p>
+    <p><strong>Date d'arrivée:</strong> {{ reservation.check_in_date }}</p>
+    <p><strong>Date de départ:</strong> {{ reservation.check_out_date }}</p>
+    <p><strong>Nombre de voyageurs:</strong> {{ reservation.number_of_guests }}</p>
+    <p><strong>Montant total:</strong> {{ reservation.total_amount }}€</p>
+    <p><strong>Statut:</strong> 
+        {% if reservation.status == 'pending' %}⏳ En attente
+        {% elif reservation.status == 'confirmed' %}✅ Confirmée
+        {% elif reservation.status == 'cancelled' %}❌ Annulée
+        {% else %}✓ Terminée{% endif %}
+    </p>
+    <a href="{% url 'reservation_history' %}" class="btn btn-primary">Retour à la liste</a>
+</div>
+{% endblock %}

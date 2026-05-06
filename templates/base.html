@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Location d'Appartements{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="{% url 'home' %}" class="navbar-brand">🏠 LocationAppart</a>
+            <ul class="navbar-nav">
+                <li><a href="{% url 'home' %}">Accueil</a></li>
+                <li><a href="{% url 'apartment_list' %}">Appartements</a></li>
+                {% if user.is_authenticated %}
+                    {% if user.role == 'proprietaire' %}
+                        <li><a href="{% url 'apartment_create' %}">Publier un appartement</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'reservation_history' %}">Réservations</a></li>
+                    <li><a href="{% url 'message_list' %}">Messages</a></li>
+                    <li><a href="{% url 'notification_list' %}">Notifications</a></li>
+                    <li><a href="{% url 'profile' %}">Profil ({{ user.username }})</a></li>
+                    <li><a href="{% url 'logout' %}">Déconnexion</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">Connexion</a></li>
+                    <li><a href="{% url 'register' %}">Inscription</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Messages d'alerte -->
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Contenu principal -->
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 LocationAppart - Tous droits réservés</p>
+        </div>
+    </footer>
+</body>
+</html>

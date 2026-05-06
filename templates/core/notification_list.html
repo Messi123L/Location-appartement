@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<h1>Mes Notifications</h1>
+<table style="width: 100%; border-collapse: collapse; margin-top: 2rem;">
+    <thead>
+        <tr style="background-color: #2c3e50; color: white;">
+            <th style="padding: 1rem;">Type</th>
+            <th style="padding: 1rem;">Titre</th>
+            <th style="padding: 1rem;">Message</th>
+            <th style="padding: 1rem;">Date</th>
+            <th style="padding: 1rem;">Statut</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for notification in notifications %}
+            <tr style="border-bottom: 1px solid #ddd;">
+                <td style="padding: 1rem;">
+                    {% if notification.notification_type == 'reservation' %}🏠
+                    {% elif notification.notification_type == 'message' %}✉️
+                    {% elif notification.notification_type == 'validation' %}✅
+                    {% else %}ℹ️{% endif %}
+                </td>
+                <td style="padding: 1rem;">{{ notification.title }}</td>
+                <td style="padding: 1rem;">{{ notification.message|truncatewords:10 }}</td>
+                <td style="padding: 1rem;">{{ notification.created_at|date:"d/m/Y H:i" }}</td>
+                <td style="padding: 1rem;">{% if notification.is_read %}✅ Lu{% else %}🔔 Nouveau{% endif %}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="5" style="padding: 2rem; text-align: center;">Aucune notification.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
