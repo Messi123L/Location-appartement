@@ -3,56 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Location d'Appartements{% endblock %}</title>
+    <title>{% block title %}LocationAppart | Trouvez votre chez-vous{% endblock %}</title>
     {% load static %}
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <!-- Navigation -->
+    <!-- Modern Navigation -->
     <nav class="navbar">
-        <div class="container">
-            <a href="{% url 'home' %}" class="navbar-brand">🏠 LocationAppart</a>
-            <ul class="navbar-nav">
-                <li><a href="{% url 'home' %}">Accueil</a></li>
-                <li><a href="{% url 'apartment_list' %}">Appartements</a></li>
+        <div class="container navbar-container">
+            <a href="{% url 'home' %}" class="navbar-brand">
+                <span class="logo-icon"><i class="fas fa-home"></i></span>
+                <span class="logo-text">LocationAppart</span>
+            </a>
+            
+            <button class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="navbar-nav" id="navbarMenu">
+                <li><a href="{% url 'home' %}" class="nav-link"><i class="fas fa-house"></i> Accueil</a></li>
+                <li><a href="{% url 'apartment_list' %}" class="nav-link"><i class="fas fa-building"></i> Appartements</a></li>
+                
                 {% if user.is_authenticated %}
-                    {% if user.role == 'proprietaire' %}
-                        <li><a href="{% url 'apartment_create' %}">Publier un appartement</a></li>
+                    {% if user.role == 'admin' %}
+                        <li><a href="{% url 'admin_dashboard' %}" class="nav-link btn-nav-accent"><i class="fas fa-chart-line"></i> Dashboard Admin</a></li>
                     {% endif %}
-                    <li><a href="{% url 'reservation_history' %}">Réservations</a></li>
-                    <li><a href="{% url 'message_list' %}">Messages</a></li>
-                    <li><a href="{% url 'notification_list' %}">Notifications</a></li>
-                    <li><a href="{% url 'profile' %}">Profil ({{ user.username }})</a></li>
-                    <li><a href="{% url 'logout' %}">Déconnexion</a></li>
+                    {% if user.role == 'proprietaire' %}
+                        <li><a href="{% url 'apartment_create' %}" class="nav-link btn-nav-accent"><i class="fas fa-plus-circle"></i> Publier</a></li>
+                    {% endif %}
+                    <li class="nav-dropdown">
+                        <a href="#" class="nav-link"><i class="fas fa-user-circle"></i> {{ user.username }}</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'reservation_history' %}"><i class="fas fa-calendar-alt"></i> Mes Réservations</a></li>
+                            <li><a href="{% url 'message_list' %}"><i class="fas fa-envelope"></i> Messages</a></li>
+                            <li><a href="{% url 'notification_list' %}"><i class="fas fa-bell"></i> Notifications</a></li>
+                            <li><a href="{% url 'profile' %}"><i class="fas fa-id-card"></i> Profil</a></li>
+                            <li class="divider"></li>
+                            <li><a href="{% url 'logout' %}" class="text-danger"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
+                        </ul>
+                    </li>
                 {% else %}
-                    <li><a href="{% url 'login' %}">Connexion</a></li>
-                    <li><a href="{% url 'register' %}">Inscription</a></li>
+                    <li><a href="{% url 'login' %}" class="nav-link"><i class="fas fa-sign-in-alt"></i> Connexion</a></li>
+                    <li><a href="{% url 'register' %}" class="nav-link btn-nav-primary">Inscription</a></li>
                 {% endif %}
             </ul>
         </div>
     </nav>
 
-    <!-- Messages d'alerte -->
-    <div class="container">
+    <!-- Alert Messages (Toast style) -->
+    <div class="toast-container">
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
+                <div class="toast toast-{{ message.tags }} fade-in">
+                    <div class="toast-content">
+                        <i class="fas fa-info-circle"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                    <button class="toast-close">&times;</button>
                 </div>
             {% endfor %}
         {% endif %}
     </div>
 
-    <!-- Contenu principal -->
-    <main class="container">
+    <!-- Main Content Area -->
+    <main class="main-content fade-in-up">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
+    <!-- Modern Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 LocationAppart - Tous droits réservés</p>
+            <div class="footer-grid">
+                <div class="footer-info">
+                    <h3>LocationAppart</h3>
+                    <p>La solution n°1 pour louer des appartements entre particuliers en toute confiance.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Liens utiles</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Accueil</a></li>
+                        <li><a href="{% url 'apartment_list' %}">Tous les appartements</a></li>
+                        <li><a href="{% url 'register' %}">Devenir membre</a></li>
+                    </ul>
+                </div>
+                <div class="footer-social">
+                    <h4>Suivez-nous</h4>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 LocationAppart. Conçu avec <i class="fas fa-heart text-danger"></i> pour votre confort.</p>
+            </div>
         </div>
     </footer>
+
+    <!-- Basic Interactions JS -->
+    <script>
+        // Toggle Mobile Menu
+        const navToggle = document.getElementById('navToggle');
+        const navbarMenu = document.getElementById('navbarMenu');
+        if(navToggle) {
+            navToggle.addEventListener('click', () => {
+                navbarMenu.classList.toggle('active');
+            });
+        }
+
+        // Close toasts
+        document.querySelectorAll('.toast-close').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.parentElement.classList.add('fade-out');
+                setTimeout(() => btn.parentElement.remove(), 300);
+            });
+        });
+
+        // Hide toasts automatically after 5s
+        setTimeout(() => {
+            document.querySelectorAll('.toast').forEach(toast => {
+                toast.classList.add('fade-out');
+                setTimeout(() => toast.remove(), 300);
+            });
+        }, 5000);
+    </script>
 </body>
 </html>

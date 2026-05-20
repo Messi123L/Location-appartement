@@ -325,3 +325,45 @@ def notification_list(request):
     notifications.update(is_read=True)
     
     return render(request, 'core/notification_list.html', {'notifications': notifications})
+
+# --- ESPACE ADMINISTRATEUR ---
+
+@login_required
+def admin_dashboard(request):
+    """Tableau de bord pour l'administrateur"""
+    if request.user.role != 'admin':
+        messages.error(request, "Accès refusé. Vous n'avez pas les droits d'administrateur.")
+        return redirect('home')
+    
+    context = {
+        'total_users': User.objects.count(),
+        'total_apartments': Apartment.objects.count(),
+        'total_reservations': Reservation.objects.count(),
+        'pending_apartments': Apartment.objects.filter(is_validated=False),
+        'recent_reservations': Reservation.objects.all()[:5],
+    }
+    return render(request, 'core/admin_dashboard.html', context)
+
+@login_required
+def admin_apartment_validate(request, pk):
+    """Action de validation d'un appartement par l'administrateur"""
+    if request.user.role != 'admin':
+        messages.error(request, "Accès refusé.")
+        return redirect('home')
+    
+    apartment = get_object_or_404(Apartment, pk=pk)
+    apartment.is_validated = True
+    apartment.is_active = True
+    apartment.save()
+    
+    # Notifier le propriétaire
+    Notification.objects.create(
+        user=apartment.owner,
+        notification_type='validation',
+        title='Appartement validé !',
+        message=f'Votre appartement "{apartment.title}" a été validé par l\'administrateur et est maintenant en ligne.',
+        link=f'/apartments/{apartment.id}/'
+    )
+    
+    messages.success(request, f'L\'appartement "{apartment.title}" a été validé avec succès.')
+    return redirect('admin_dashboard')

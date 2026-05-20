@@ -1,22 +1,42 @@
 {% extends 'base.html' %}
 
-{% block title %}Connexion{% endblock %}
+{% block title %}Connexion | LocationAppart{% endblock %}
 
 {% block content %}
-<div class="card" style="max-width: 500px; margin: 2rem auto; padding: 2rem;">
-    <h2>Connexion</h2>
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="username">Nom d'utilisateur</label>
-            <input type="text" name="username" id="username" class="form-control" required>
+<div class="auth-container">
+    <div class="form-card fade-in-up">
+        <div class="form-header">
+            <div class="logo-icon" style="margin: 0 auto 1.5rem;">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2>Bon retour !</h2>
+            <p style="color: var(--text-muted);">Connectez-vous pour gérer vos locations.</p>
         </div>
-        <div class="form-group">
-            <label for="password">Mot de passe</label>
-            <input type="password" name="password" id="password" class="form-control" required>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Nom d'utilisateur</label>
+                <div style="position: relative;">
+                    <i class="fas fa-user" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                    <input type="text" name="username" id="username" class="form-control" style="padding-left: 2.75rem;" placeholder="Votre pseudo" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <div style="position: relative;">
+                    <i class="fas fa-key" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                    <input type="password" name="password" id="password" class="form-control" style="padding-left: 2.75rem;" placeholder="••••••••" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1rem;">
+                Se connecter <i class="fas fa-sign-in-alt"></i>
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+            <p style="color: var(--text-muted);">Pas encore de compte ? <a href="{% url 'register' %}" style="color: var(--primary); font-weight: 600;">Inscrivez-vous gratuitement</a></p>
         </div>
-        <button type="submit" class="btn btn-primary">Se connecter</button>
-    </form>
-    <p style="margin-top: 1rem;">Pas encore de compte ? <a href="{% url 'register' %}">Inscrivez-vous</a></p>
+    </div>
 </div>
 {% endblock %}

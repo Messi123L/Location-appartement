@@ -34,6 +34,10 @@ urlpatterns = [
     
     # Notifications
     path('notifications/', views.notification_list, name='notification_list'),
+    
+    # Espace Administrateur
+    path('dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('dashboard/apartment/<int:pk>/validate/', views.admin_apartment_validate, name='admin_apartment_validate'),
 ]
 
 # Gestion des fichiers médias en développement

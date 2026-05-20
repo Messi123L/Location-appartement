@@ -78,7 +78,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'location_db',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'Tipex2005.',
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {

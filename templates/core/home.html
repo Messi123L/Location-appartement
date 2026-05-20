@@ -1,60 +1,86 @@
 {% extends 'base.html' %}
 
-{% block title %}Accueil - Location d'Appartements{% endblock %}
+{% block title %}LocationAppart | Trouvez l'appartement de vos rêves{% endblock %}
 
 {% block content %}
-<h1>Bienvenue sur LocationAppart</h1>
-<p>Trouvez l'appartement idéal pour votre séjour !</p>
+<!-- Hero Section -->
+</div><!-- Close container from base.html to allow full width hero -->
+<section class="hero">
+    <div class="container">
+        <h1 class="hero-title fade-in-up">Trouvez votre prochain chez-vous</h1>
+        <p class="hero-subtitle fade-in-up">Découvrez des appartements uniques pour vos séjours, qu'ils soient courts ou longs, partout dans le pays.</p>
+    </div>
+</section>
 
-<!-- Formulaire de recherche -->
-<div class="card" style="margin: 2rem 0; padding: 2rem;">
-    <h2>Rechercher un appartement</h2>
-    <form method="get" action="{% url 'home' %}">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-            <div class="form-group">
-                <label for="city">Ville</label>
-                <input type="text" name="city" id="city" class="form-control" 
-                       placeholder="Paris, Lyon..." value="{{ search_params.city }}">
+<!-- Modern Search Bar -->
+<div class="container">
+    <div class="search-container fade-in-up" style="animation-delay: 0.2s;">
+        <form method="get" action="{% url 'home' %}" class="search-card">
+            <div class="search-group">
+                <label for="city">Destination</label>
+                <input type="text" name="city" id="city" placeholder="Où allez-vous ?" value="{{ search_params.city }}">
             </div>
-            <div class="form-group">
-                <label for="min_price">Prix minimum</label>
-                <input type="number" name="min_price" id="min_price" class="form-control" 
-                       placeholder="50" value="{{ search_params.min_price }}">
+            <div class="search-group">
+                <label for="min_price">Prix Min</label>
+                <input type="number" name="min_price" id="min_price" placeholder="Budget min" value="{{ search_params.min_price }}">
             </div>
-            <div class="form-group">
-                <label for="max_price">Prix maximum</label>
-                <input type="number" name="max_price" id="max_price" class="form-control" 
-                       placeholder="500" value="{{ search_params.max_price }}">
+            <div class="search-group">
+                <label for="max_price">Prix Max</label>
+                <input type="number" name="max_price" id="max_price" placeholder="Budget max" value="{{ search_params.max_price }}">
             </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Rechercher</button>
-    </form>
-</div>
+            <button type="submit" class="btn-search">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+    </div>
 
-<!-- Liste des appartements -->
-<h2>Appartements disponibles</h2>
-<div class="apartment-grid">
-    {% for apartment in apartments %}
-        <div class="card">
-            {% if apartment.photos %}
-                <img src="{{ apartment.photos.url }}" alt="{{ apartment.title }}">
-            {% else %}
-                <img src="https://via.placeholder.com/400x200?text=Pas+de+photo" alt="{{ apartment.title }}">
-            {% endif %}
-            <div class="card-body">
-                <h3 class="card-title">{{ apartment.title }}</h3>
-                <p>{{ apartment.city }}</p>
-                <p>{{ apartment.description|truncatewords:20 }}</p>
-                <p class="card-price">{{ apartment.price_per_night }}€ / nuit</p>
-                <p>🛏️ {{ apartment.bedrooms }} chambres | 👥 {{ apartment.max_guests }} personnes</p>
-                <a href="{% url 'apartment_detail' apartment.pk %}" class="btn btn-primary">Voir les détails</a>
-                {% if user.is_authenticated and user.role == 'client' %}
-                    <a href="{% url 'reservation_create' apartment.pk %}" class="btn btn-success">Réserver</a>
-                {% endif %}
-            </div>
+    <!-- Featured Apartments Section -->
+    <div class="section-header" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+        <div>
+            <h2 style="font-size: 2rem; font-weight: 700;">Appartements disponibles</h2>
+            <p style="color: var(--text-muted);">Explorez nos meilleures offres sélectionnées pour vous.</p>
         </div>
-    {% empty %}
-        <p>Aucun appartement disponible pour le moment.</p>
-    {% endfor %}
+        <a href="{% url 'apartment_list' %}" class="btn btn-outline">Voir tout <i class="fas fa-arrow-right"></i></a>
+    </div>
+
+    <div class="apartment-grid">
+        {% for apartment in apartments %}
+            <article class="modern-card fade-in-up">
+                <div class="card-img-wrapper">
+                    {% if apartment.photos %}
+                        <img src="{{ apartment.photos.url }}" alt="{{ apartment.title }}">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Placeholder">
+                    {% endif %}
+                    <span class="card-badge">{{ apartment.city }}</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="card-city"><i class="fas fa-map-marker-alt"></i> {{ apartment.city }}</span>
+                        <div class="card-price">{{ apartment.price_per_night }}€<span> / nuit</span></div>
+                    </div>
+                    <h3 class="card-title">{{ apartment.title }}</h3>
+                    <div class="card-features">
+                        <span><i class="fas fa-bed"></i> {{ apartment.bedrooms }} ch.</span>
+                        <span><i class="fas fa-users"></i> {{ apartment.max_guests }} pers.</span>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <a href="{% url 'apartment_detail' apartment.pk %}" class="btn btn-outline btn-block">Détails</a>
+                        {% if user.is_authenticated and user.role == 'client' %}
+                            <a href="{% url 'reservation_create' apartment.pk %}" class="btn btn-primary btn-block">Réserver</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+        {% empty %}
+            <div style="grid-column: 1 / -1; text-align: center; padding: 4rem; background: var(--surface); border-radius: var(--radius-lg); border: 2px dashed var(--border);">
+                <i class="fas fa-search" style="font-size: 3rem; color: var(--border); margin-bottom: 1rem;"></i>
+                <h3>Aucun appartement trouvé</h3>
+                <p style="color: var(--text-muted);">Essayez de modifier vos critères de recherche.</p>
+                <a href="{% url 'home' %}" class="btn btn-primary" style="margin-top: 1.5rem;">Réinitialiser</a>
+            </div>
+        {% endfor %}
+    </div>
 </div>
+<div class="container"><!-- Re-open container for base.html footer if needed, though my base.html has its own structure -->
 {% endblock %}

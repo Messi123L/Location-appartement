@@ -1,15 +1,65 @@
 {% extends 'base.html' %}
 
-{% block title %}Inscription{% endblock %}
+{% block title %}Créer un compte | LocationAppart{% endblock %}
 
 {% block content %}
-<div class="card" style="max-width: 500px; margin: 2rem auto; padding: 2rem;">
-    <h2>Inscription</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">S'inscrire</button>
-    </form>
-    <p style="margin-top: 1rem;">Déjà un compte ? <a href="{% url 'login' %}">Connectez-vous</a></p>
+<div class="auth-container" style="max-width: 600px;">
+    <div class="form-card fade-in-up">
+        <div class="form-header">
+            <div class="logo-icon" style="margin: 0 auto 1.5rem;">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <h2>Rejoignez-nous</h2>
+            <p style="color: var(--text-muted);">Commencez votre aventure sur LocationAppart dès aujourd'hui.</p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="modern-form-fields">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1rem;">
+                Créer mon compte <i class="fas fa-arrow-right"></i>
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+            <p style="color: var(--text-muted);">Déjà inscrit ? <a href="{% url 'login' %}" style="color: var(--primary); font-weight: 600;">Connectez-vous ici</a></p>
+        </div>
+    </div>
 </div>
+
+<style>
+    /* Specific styling for the generated Django form in register */
+    .modern-form-fields p {
+        margin-bottom: 1.25rem;
+    }
+    .modern-form-fields label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    .modern-form-fields input, 
+    .modern-form-fields select, 
+    .modern-form-fields textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        font-family: inherit;
+        transition: var(--transition);
+    }
+    .modern-form-fields input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        outline: none;
+    }
+    .modern-form-fields .helptext {
+        display: block;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-top: 0.25rem;
+    }
+</style>
 {% endblock %}

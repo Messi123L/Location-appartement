@@ -1,29 +1,65 @@
 {% extends 'base.html' %}
 
-{% block title %}Liste des Appartements{% endblock %}
+{% block title %}Mes Appartements | LocationAppart{% endblock %}
 
 {% block content %}
-<h1>Mes Appartements</h1>
+<div class="section-header" style="margin-bottom: 3rem;">
+    <h1 style="font-size: 2.5rem; font-weight: 800; color: var(--text);">Mes Appartements</h1>
+    <p style="color: var(--text-muted);">Gérez vos propriétés et suivez leur statut de validation.</p>
+</div>
+
 <div class="apartment-grid">
     {% for apartment in apartments %}
-        <div class="card">
-            {% if apartment.photos %}
-                <img src="{{ apartment.photos.url }}" alt="{{ apartment.title }}">
-            {% else %}
-                <img src="https://via.placeholder.com/400x200?text=Pas+de+photo" alt="{{ apartment.title }}">
-            {% endif %}
-            <div class="card-body">
-                <h3 class="card-title">{{ apartment.title }}</h3>
-                <p>{{ apartment.city }}</p>
-                <p class="card-price">{{ apartment.price_per_night }}€ / nuit</p>
-                <p>Statut: {% if apartment.is_validated %}✅ Validé{% else %}⏳ En attente{% endif %}</p>
-                <a href="{% url 'apartment_detail' apartment.pk %}" class="btn btn-primary">Voir détails</a>
-                <a href="{% url 'apartment_update' apartment.pk %}" class="btn btn-success">Modifier</a>
-                <a href="{% url 'apartment_delete' apartment.pk %}" class="btn btn-danger">Supprimer</a>
+        <article class="modern-card fade-in-up">
+            <div class="card-img-wrapper">
+                {% if apartment.photos %}
+                    <img src="{{ apartment.photos.url }}" alt="{{ apartment.title }}">
+                {% else %}
+                    <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Placeholder">
+                {% endif %}
+                <span class="card-badge {% if apartment.is_validated %}bg-success{% else %}bg-warning{% endif %}">
+                    {% if apartment.is_validated %}
+                        <i class="fas fa-check-circle"></i> Validé
+                    {% else %}
+                        <i class="fas fa-clock"></i> En attente
+                    {% endif %}
+                </span>
             </div>
-        </div>
+            <div class="card-content">
+                <div class="card-meta">
+                    <span class="card-city"><i class="fas fa-map-marker-alt"></i> {{ apartment.city }}</span>
+                    <div class="card-price">{{ apartment.price_per_night }}€<span> / nuit</span></div>
+                </div>
+                <h3 class="card-title">{{ apartment.title }}</h3>
+                <div class="card-features">
+                    <span><i class="fas fa-bed"></i> {{ apartment.bedrooms }} ch.</span>
+                    <span><i class="fas fa-users"></i> {{ apartment.max_guests }} pers.</span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem;">
+                    <a href="{% url 'apartment_detail' apartment.pk %}" class="btn btn-outline" title="Voir"><i class="fas fa-eye"></i></a>
+                    <a href="{% url 'apartment_update' apartment.pk %}" class="btn btn-primary" title="Modifier"><i class="fas fa-edit"></i></a>
+                    <a href="{% url 'apartment_delete' apartment.pk %}" class="btn btn-outline text-danger" style="grid-column: span 2; border-color: rgba(239, 68, 68, 0.2);" title="Supprimer">
+                        <i class="fas fa-trash"></i> Supprimer
+                    </a>
+                </div>
+            </div>
+        </article>
     {% empty %}
-        <p>Aucun appartement trouvé.</p>
+        <div style="grid-column: 1 / -1; text-align: center; padding: 5rem; background: var(--surface); border-radius: var(--radius-lg); border: 2px dashed var(--border);">
+            <div class="logo-icon" style="margin: 0 auto 1.5rem; background: var(--border);">
+                <i class="fas fa-building" style="color: var(--text-muted);"></i>
+            </div>
+            <h3>Vous n'avez pas encore d'appartements</h3>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Commencez à louer votre propriété en quelques clics.</p>
+            <a href="{% url 'apartment_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> Publier mon premier appartement
+            </a>
+        </div>
     {% endfor %}
 </div>
+
+<style>
+    .bg-success { background: #d1fae5 !important; color: #065f46 !important; }
+    .bg-warning { background: #fef3c7 !important; color: #92400e !important; }
+</style>
 {% endblock %}

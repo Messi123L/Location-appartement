@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+
+{% block title %}Tableau de Bord Administrateur | LocationAppart{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard fade-in-up">
+    <div class="section-header" style="margin-bottom: 3rem;">
+        <h1 style="font-size: 2.5rem; font-weight: 800; color: var(--text);">Espace Administrateur</h1>
+        <p style="color: var(--text-muted);">Vue d'ensemble de la plateforme et gestion des validations.</p>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(79, 70, 229, 0.1); color: var(--primary);">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ total_users }}</h3>
+                <p>Utilisateurs</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--secondary);">
+                <i class="fas fa-building"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ total_apartments }}</h3>
+                <p>Appartements</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--accent);">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ total_reservations }}</h3>
+                <p>Réservations</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ pending_apartments.count }}</h3>
+                <p>En attente</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Admin Content -->
+    <div class="admin-content-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-top: 3rem;">
+        
+        <!-- Pending Validations -->
+        <section class="admin-section">
+            <div class="section-card">
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 style="font-size: 1.5rem; font-weight: 700;">Validations en attente</h2>
+                    <span class="badge">{{ pending_apartments.count }} nouveaux</span>
+                </div>
+                
+                <div class="table-container">
+                    <table class="modern-table">
+                        <thead>
+                            <tr>
+                                <th>Appartement</th>
+                                <th>Propriétaire</th>
+                                <th>Ville</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for apt in pending_apartments %}
+                                <tr>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 1rem;">
+                                            <div style="width: 40px; height: 40px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+                                                {% if apt.photos %}
+                                                    <img src="{{ apt.photos.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                {% else %}
+                                                    <div style="width: 100%; height: 100%; background: var(--border); display: flex; align-items: center; justify-content: center;">
+                                                        <i class="fas fa-image" style="color: var(--text-muted);"></i>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <span style="font-weight: 600;">{{ apt.title|truncatechars:30 }}</span>
+                                        </div>
+                                    </td>
+                                    <td>{{ apt.owner.username }}</td>
+                                    <td>{{ apt.city }}</td>
+                                    <td>
+                                        <div style="display: flex; gap: 0.5rem;">
+                                            <a href="{% url 'admin_apartment_validate' apt.pk %}" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Valider</a>
+                                            <a href="{% url 'apartment_detail' apt.pk %}" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Voir</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="4" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                                        <i class="fas fa-check-circle" style="font-size: 2rem; color: var(--secondary); margin-bottom: 1rem; display: block;"></i>
+                                        Aucun appartement en attente de validation.
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Reservations -->
+        <section class="admin-section">
+            <div class="section-card">
+                <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem;">Réservations récentes</h2>
+                <div class="activity-list">
+                    {% for res in recent_reservations %}
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-circle" style="font-size: 0.5rem; color: var(--primary);"></i>
+                            </div>
+                            <div class="activity-info">
+                                <p><strong>{{ res.client.username }}</strong> a réservé <strong>{{ res.apartment.title|truncatechars:20 }}</strong></p>
+                                <span class="activity-date">{{ res.created_at|timesince }}</span>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p style="color: var(--text-muted); text-align: center;">Aucune activité récente.</p>
+                    {% endfor %}
+                </div>
+                <a href="{% url 'reservation_history' %}" class="btn btn-outline btn-block" style="margin-top: 1.5rem;">Voir tout l'historique</a>
+            </div>
+        </section>
+    </div>
+</div>
+
+<style>
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+    }
+    .stat-card {
+        background: var(--surface);
+        padding: 1.5rem;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        border: 1px solid var(--border);
+    }
+    .stat-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    .stat-info h3 { font-size: 1.75rem; font-weight: 800; line-height: 1; margin-bottom: 0.25rem; }
+    .stat-info p { color: var(--text-muted); font-size: 0.9rem; font-weight: 500; }
+
+    .section-card {
+        background: var(--surface);
+        padding: 2rem;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+    }
+
+    .modern-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .modern-table th {
+        text-align: left;
+        padding: 1rem;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        font-weight: 700;
+        border-bottom: 2px solid var(--background);
+    }
+    .modern-table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--background);
+        vertical-align: middle;
+    }
+
+    .badge {
+        background: var(--primary);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: var(--radius-pill);
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+    .activity-item {
+        display: flex;
+        gap: 1rem;
+    }
+    .activity-info p { font-size: 0.9rem; margin-bottom: 0.25rem; }
+    .activity-date { font-size: 0.8rem; color: var(--text-muted); }
+
+    @media (max-width: 992px) {
+        .admin-content-grid { grid-template-columns: 1fr !important; }
+    }
+</style>
+{% endblock %}
